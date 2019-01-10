@@ -1,7 +1,6 @@
 import json
-import overrides
-
-from typing import Dict, Union, Iterable
+from overrides import overrides
+from typing import Dict, Union, Iterable, List
 
 from allennlp.data import Tokenizer, TokenIndexer, Instance
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
@@ -10,6 +9,7 @@ from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import WordTokenizer
 
 from fever.reader.document_database import FEVERDocumentDatabase
+from fever.reader.simple_random import SimpleRandom
 
 
 class FEVERPreprocessing(object):
@@ -41,13 +41,21 @@ class FEVERDatasetReader(DatasetReader):
         self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
         self._preprocessing = preprocessing or FEVERPreprocessing()
 
-    def get_doc_lines(self, page_title:str):
+    def get_doc_lines(self, page_title:str) -> List[str]:
         doc_lines = self._database.get_doc_lines(page_title)
         return [line.split('\t')[1] for line in doc_lines]
 
-    def get_doc_line(self, page_title: str, line_number: int):
+    def get_doc_line(self, page_title: str, line_number: int) -> str:
         if line_number > -1:
             return self.get_doc_lines(page_title)[line_number]
+        else:
+            return self.get_random_line(self.get_non_empty_lines(self.get_doc_lines(page_title)))
+
+    def get_random_line(self,lines:List[str]) -> str:
+        return lines[SimpleRandom.get_instance().next_rand(0, len(lines) - 1)]
+
+    def get_non_empty_lines(self, lines:List[str]) -> List[str]:
+        return [line for line in lines if len(line.strip())]
 
     @overrides
     def text_to_instance(self, evidence, claim:str) -> Instance:

@@ -12,7 +12,8 @@ class FEVERDocumentDatabase(object):
     def __init__(self, path: str):
         self._connection = self.connect(cached_path(path))
 
-    def connect(self, path:str):
+    @staticmethod
+    def connect(path:str):
         try:
             return sqlite3.connect(path)
         except sqlite3.Error as e:
