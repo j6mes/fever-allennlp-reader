@@ -1,6 +1,6 @@
 import json
 from overrides import overrides
-from typing import Dict, Union, Iterable, List
+from typing import Dict, Union, Iterable, List, Tuple
 
 from allennlp.data import Tokenizer, TokenIndexer, Instance
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
@@ -9,29 +9,20 @@ from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import WordTokenizer
 
 from fever.reader.document_database import FEVERDocumentDatabase
+from fever.reader.preprocessing import FEVERPreprocessing, ConcatenateEvidence
 from fever.reader.simple_random import SimpleRandom
 
 
-class FEVERPreprocessing(object):
-
-    def preprocess(self, evidence, claim):
-        return evidence, claim
-
-
-class ConcatenateEvidence(FEVERPreprocessing):
-    pass
 
 
 @DatasetReader.register("fever")
 class FEVERDatasetReader(DatasetReader):
     
-    def __init__(self,
-                 database: Union[FEVERDocumentDatabase, str],
-                 wiki_tokenizer: Tokenizer = None,
-                 claim_tokenizer: Tokenizer = None,
-                 token_indexers: Dict[str, TokenIndexer] = None,
-                 preprocessing: FEVERPreprocessing = ConcatenateEvidence) -> None:
+    def __init__(self, database: Union[FEVERDocumentDatabase, str], wiki_tokenizer: Tokenizer = None,
+                 claim_tokenizer: Tokenizer = None, token_indexers: Dict[str, TokenIndexer] = None,
+                 preprocessing: FEVERPreprocessing = ConcatenateEvidence()) -> None:
 
+        super().__init__()
         if type(database) == str:
             database = FEVERDocumentDatabase(database)
 
