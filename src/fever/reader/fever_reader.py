@@ -6,6 +6,8 @@ from typing import Dict, Union, Iterable
 from allennlp.data import Tokenizer, TokenIndexer, Instance
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import TextField
+from allennlp.data.token_indexers import SingleIdTokenIndexer
+from allennlp.data.tokenizers import WordTokenizer
 
 from fever.reader.document_database import FEVERDocumentDatabase
 
@@ -34,10 +36,10 @@ class FEVERDatasetReader(DatasetReader):
             database = FEVERDocumentDatabase(database)
 
         self._database = database
-        self._wiki_tokenizer = wiki_tokenizer
-        self._claim_tokenizer = claim_tokenizer
-        self._token_indexers = token_indexers
-        self._preprocessing = preprocessing
+        self._wiki_tokenizer = wiki_tokenizer or WordTokenizer()
+        self._claim_tokenizer = claim_tokenizer or WordTokenizer()
+        self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
+        self._preprocessing = preprocessing or FEVERPreprocessing()
 
     def get_doc_lines(self, page_title:str):
         doc_lines = self._database.get_doc_lines(page_title)
