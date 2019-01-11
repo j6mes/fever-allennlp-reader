@@ -26,5 +26,5 @@ class ConcatenateEvidence(FEVERInstanceGenerator):
         for item in flat_evidence_text:
             evidence_dict[item] = 1
         evidence = " ".join(evidence_dict.keys())
-        
+
         return [{"evidence":evidence, "claim":claim, "evidence_group":None}]
