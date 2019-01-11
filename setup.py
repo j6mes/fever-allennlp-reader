@@ -11,7 +11,7 @@ depends = [req.replace("git+git://", "git+http://") for req in reqs if req.start
 
 setup(
     name='fever-allennlp-reader',
-    version='1.0.0',
+    version='1.1.0',
     description='Fact Extraction and VERification dataset reader for AllenNLP',
     long_description="readme",
     license=license,
