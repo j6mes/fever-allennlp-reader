@@ -68,6 +68,29 @@ class TestFeverReader(unittest.TestCase):
 
         self.assertTrue(line in lines)
 
+    def test_read_demo_json_all_sample(self):
+        reader = FEVERDatasetReader("db2.db")
+        data = reader.read("sample.jsonl")
+        self.assertEqual(len(list(data)), 4)
+
+    def test_read_demo_json_premise(self):
+        reader = FEVERDatasetReader("db2.db")
+        data = list(reader.read("sample.jsonl"))
+        self.assertEqual(" ".join([tok.text for tok in data[0].fields['hypothesis'].tokens]), "Colin Kaepernick became a starting quarterback during the 49ers 63rd season in the National Football League .")
+
+    def test_read_demo_json_hypothesis(self):
+        reader = FEVERDatasetReader("db2.db")
+        data = list(reader.read("sample.jsonl"))
+        self.assertEqual(" ".join([tok.text for tok in data[2].fields['premise'].tokens]), "Page 1 Line 1")
+
+    def test_read_demo_json_hypothesis_concat(self):
+        reader = FEVERDatasetReader("db2.db")
+        data = list(reader.read("sample.jsonl"))
+        self.assertEqual(" ".join([tok.text for tok in data[3].fields['premise'].tokens]), "Page 1 Line 1 Page 1 Line 2")
+
+
+
+
 
 
 

@@ -1,0 +1,4 @@
+{"id": 91198, "verifiable": "NOT VERIFIABLE", "label": "NOT ENOUGH INFO", "claim": "Colin Kaepernick became a starting quarterback during the 49ers 63rd season in the National Football League.", "evidence": [[[108548, null, "test1", 1]]]}
+{"id": 194462, "verifiable": "NOT VERIFIABLE", "label": "NOT ENOUGH INFO", "claim": "Tilda Swinton is a vegan.", "evidence": [[[227768, null, "test1", 1]]]}
+{"id": 137334, "verifiable": "VERIFIABLE", "label": "SUPPORTS", "claim": "Fox 2000 Pictures released the film Soul Food.", "evidence": [[[289914, 283015, "test1", 0]], [[291259, 284217, "test1", 0]], [[293412, 285960, "test1", 0]], [[337212, 322620, "test1", 0]], [[337214, 322622, "test1", 0]]]}
+{"id": 166626, "verifiable": "NOT VERIFIABLE", "label": "NOT ENOUGH INFO", "claim": "Anne Rice was born in New Jersey.", "evidence": [[[191656, null, "test1", 0], [191657, null, "test1", 1]]]}
