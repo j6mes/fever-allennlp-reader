@@ -17,4 +17,4 @@ deploy:
   password: $DEPLOY_PYPI_PASS
   skip_existing: true
   on:
-    condition: "$TRAVIS_BRANCH == release-*"
+    condition: $TRAVIS_BRANCH == release-*
