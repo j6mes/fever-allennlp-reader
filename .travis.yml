@@ -9,9 +9,14 @@ script:
   - python -m unittest discover --verbose --start-directory .
   - cd ..
 before_deploy:
+  - export VERSION_NUMBER=$(echo $RID | cut -d'v' -f 2).$TRAVIS_BUILD_NUMBER
+  - sed -e 's/0\.0\.0/'"$VERSION_NUMBER"'/g' setup.py > setup.py
   - python setup.py sdist
 deploy:
   provider: pypi
   user: $DEPLOY_PYPI_USER
   password: $DEPLOY_PYPI_PASS
   skip_existing: true
+  on:
+    tags: true
+    condition: "$TRAVIS_TAG == release-*"
