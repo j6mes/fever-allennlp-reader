@@ -4,7 +4,7 @@ from typing import Dict, Union, Iterable, List, Tuple
 
 from allennlp.data import Tokenizer, TokenIndexer, Instance
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
-from allennlp.data.fields import TextField, LabelField
+from allennlp.data.fields import TextField, LabelField, MetadataField
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import WordTokenizer
 
@@ -54,13 +54,19 @@ class FEVERDatasetReader(DatasetReader):
         return [line for line in lines if len(line.strip())]
 
     @overrides
-    def text_to_instance(self, evidence:str, claim:str, label:str = None) -> Instance:
+    def text_to_instance(self, claim_id:int, evidence_group:int, evidence:str, claim:str, label:str = None) -> Instance:
 
         claim_tokens = self._claim_tokenizer.tokenize(claim)
         evidence_tokens = self._wiki_tokenizer.tokenize(evidence)
 
+        instance_meta = {"claim_id":claim_id,
+                         "evidence_group": evidence_group,
+                         "evidence_tokens": evidence_tokens,
+                         "claim_tokens": claim_tokens,}
+
         instance_dict = {"premise": TextField(evidence_tokens, self._token_indexers),
                          "hypothesis": TextField(claim_tokens, self._token_indexers),
+                         "metadata": MetadataField(instance_meta)
                         }
 
 
@@ -71,12 +77,13 @@ class FEVERDatasetReader(DatasetReader):
 
 
     def generate_instances(self,
-                           evidence: List[List[Tuple[str,int]]],
+                           claim_id:int,
+                           evidence: List[List[Tuple[int,str,int]]],
                            claim: str,
                            label:str = None) -> Iterable[Instance]:
 
         generated = self._instance_generator.generate_instances(self, evidence, claim)
-        return [self.text_to_instance(item['evidence'], item['claim'],label) for item in generated]
+        return [self.text_to_instance(claim_id, item['evidence_group'], item['evidence'], item['claim'],label) for item in generated]
 
     """
     self.text_to_instance(evidence, claim)
@@ -89,10 +96,11 @@ class FEVERDatasetReader(DatasetReader):
             for line in f:
                 instance = json.loads(line)
 
+                claim_id:int = instance['id']
                 claim:str = instance['claim']
                 evidence: List[List[Tuple[int,int,str,int]]] = instance['evidence']
-                evidence: List[List[Tuple[str,int]]] = [[(item[2], item[3]) for item in group] for group in evidence]
+                evidence: List[List[Tuple[int, str,int]]] = [[(item[1], item[2], item[3]) for item in group] for group in evidence]
 
                 label:str = instance['label'] if 'label' in instance else None
 
-                yield from self.generate_instances(evidence, claim, label)
+                yield from self.generate_instances(claim_id, evidence, claim, label)
