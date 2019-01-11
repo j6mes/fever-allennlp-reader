@@ -10,7 +10,7 @@ script:
   - cd ..
 before_deploy:
   - export VERSION_NUMBER=$(echo $RID | cut -d'v' -f 2).$TRAVIS_BUILD_NUMBER
-  - sed -e 's/0\.0\.0/'"$VERSION_NUMBER"'/g' setup.py > setup.py
+  - sed -i -e 's/0\.0\.0/'"$VERSION_NUMBER"'/g' setup.py
   - python setup.py sdist
 deploy:
   provider: pypi
