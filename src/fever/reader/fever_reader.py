@@ -63,8 +63,8 @@ class FEVERDatasetReader(DatasetReader):
 
         instance_meta = {"claim_id":claim_id,
                          "evidence_group": evidence_group,
-                         "evidence_tokens": evidence_tokens,
-                         "claim_tokens": claim_tokens,}
+                         "premise_tokens": evidence_tokens,
+                         "hypothesis_tokens": claim_tokens,}
 
         instance_dict = {"premise": TextField(evidence_tokens, self._token_indexers),
                          "hypothesis": TextField(claim_tokens, self._token_indexers),
