@@ -1,9 +1,11 @@
 import json
+
+from allennlp.common.util import ensure_list
 from overrides import overrides
 from typing import Dict, Union, Iterable, List, Tuple
 
 from allennlp.data import Tokenizer, TokenIndexer, Instance
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
+from allennlp.data.dataset_readers.dataset_reader import DatasetReader, _LazyInstances
 from allennlp.data.fields import TextField, LabelField, MetadataField
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import WordTokenizer
@@ -85,13 +87,8 @@ class FEVERDatasetReader(DatasetReader):
         generated = self._instance_generator.generate_instances(self, evidence, claim)
         return [self.text_to_instance(claim_id, item['evidence_group'], item['evidence'], item['claim'],label) for item in generated]
 
-    """
-    self.text_to_instance(evidence, claim)
-    """
-
     @overrides
-    def read(self, file_path:str) -> Iterable[Instance]:
-
+    def _read(self, file_path: str):
         with open(file_path,"r") as f:
             for line in f:
                 instance = json.loads(line)
