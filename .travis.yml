@@ -1,12 +1,6 @@
 language: python
 python:
   - "3.6"
-stages:
-  - install
-  - script
-  - before_deploy
-  - name: deploy
-    if: branch =~ release-.*
 install:
   - python setup.py install
 script:
@@ -21,4 +15,6 @@ deploy:
   user: $DEPLOY_PYPI_USER
   password: $DEPLOY_PYPI_PASS
   skip_existing: true
-  all_branches: true
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH == release-*
