@@ -21,3 +21,4 @@ deploy:
   user: $DEPLOY_PYPI_USER
   password: $DEPLOY_PYPI_PASS
   skip_existing: true
+  all_branches: true
