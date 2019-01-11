@@ -6,7 +6,7 @@ stages:
   - script
   - before_deploy
   - name: deploy
-    if: branch = release-*
+    if: branch =~ release-.*
 install:
   - python setup.py install
 script:
