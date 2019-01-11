@@ -8,7 +8,6 @@ stages:
   - name: deploy
     if: branch = release-*
 install:
-  - sudo apt-get update
   - python setup.py install
 script:
   - cd tests
