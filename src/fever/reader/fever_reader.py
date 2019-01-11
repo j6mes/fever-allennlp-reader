@@ -37,6 +37,9 @@ class FEVERDatasetReader(DatasetReader):
         return [line.split('\t')[1] for line in doc_lines]
 
     def get_doc_line(self, page_title: str, line_number: int) -> str:
+        if line_number is None:
+            raise Exception("It looks like an NEI page is being loaded, but no evidence is present")
+
         if line_number > -1:
             return self.get_doc_lines(page_title)[line_number]
         else:
@@ -51,6 +54,8 @@ class FEVERDatasetReader(DatasetReader):
     @overrides
     def text_to_instance(self, evidence, claim:str) -> Instance:
 
+        evidence = [[self.get_doc_line(item[2], item[3]) for item in group] for group in evidence]
+
         evidence, claim = self._preprocessing.preprocess(evidence, claim)
 
         claim_tokens = self._claim_tokenizer.tokenize(claim)
@@ -58,7 +63,7 @@ class FEVERDatasetReader(DatasetReader):
 
         return Instance(
             {"premise": TextField(evidence_tokens, self._token_indexers),
-             "hypothesis":TextField(claim_tokens, self._token_indexers)})
+             "hypothesis": TextField(claim_tokens, self._token_indexers)})
 
     @overrides
     def read(self, file_path:str) -> Iterable[Instance]:
@@ -68,6 +73,6 @@ class FEVERDatasetReader(DatasetReader):
                 instance = json.loads(line)
 
                 claim = instance['claim']
-                evidence = set([self.get_doc_line(d[0],d[1]) for d in instance['evidence']])
+                evidence = instance['evidence']
 
                 yield from [self.text_to_instance(evidence, claim)]

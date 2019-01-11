@@ -19,6 +19,12 @@ class ConcatenateEvidence(FEVERPreprocessing):
 
     @overrides
     def preprocess(self, evidence:List[List[str]], claim:str)->Tuple[str,str]:
-        evidence =  " ".join(self._flatten(self._flatten(evidence)))
+        items = self._flatten(evidence)
+
+        # Key sets in dictionaries preserve insert order whereas python sets do not
+        evidence = dict()
+        for item in items:
+            evidence[item] = 1
+        evidence = " ".join(evidence.keys())
         return evidence, claim
 
