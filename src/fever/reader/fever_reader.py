@@ -1,11 +1,10 @@
 import json
 
-from allennlp.common.util import ensure_list
 from overrides import overrides
-from typing import Dict, Union, Iterable, List, Tuple
+from typing import Dict, Union, Iterable, List, Tuple, Optional
 
 from allennlp.data import Tokenizer, TokenIndexer, Instance
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader, _LazyInstances
+from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import TextField, LabelField, MetadataField
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import WordTokenizer
@@ -20,7 +19,7 @@ from fever.reader.simple_random import SimpleRandom
 @DatasetReader.register("fever")
 class FEVERDatasetReader(DatasetReader):
     
-    def __init__(self, database: Union[FEVERDocumentDatabase, str] = "data/fever/fever.db",
+    def __init__(self, database: Optional[Union[FEVERDocumentDatabase, str]] = "data/fever/fever.db",
                  wiki_tokenizer: Tokenizer = None,
                  claim_tokenizer: Tokenizer = None,
                  token_indexers: Dict[str, TokenIndexer] = None,
