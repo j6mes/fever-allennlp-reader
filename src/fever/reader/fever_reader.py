@@ -20,7 +20,7 @@ from fever.reader.simple_random import SimpleRandom
 @DatasetReader.register("fever")
 class FEVERDatasetReader(DatasetReader):
     
-    def __init__(self, database: Union[FEVERDocumentDatabase, str],
+    def __init__(self, database: Union[FEVERDocumentDatabase, str] = "data/fever/fever.db",
                  wiki_tokenizer: Tokenizer = None,
                  claim_tokenizer: Tokenizer = None,
                  token_indexers: Dict[str, TokenIndexer] = None,
