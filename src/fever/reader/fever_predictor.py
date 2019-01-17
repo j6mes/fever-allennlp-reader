@@ -27,8 +27,7 @@ class FEVERPredictor(Predictor):
         evidence: List[Tuple[str, int]] = json_dict['predicted_sentences']
         evidence: List[List[Tuple[str,int]]] = [[(None, item[0],item[1]) for item in evidence]]
 
-
-        generated = self._instance_generator.generate_instances(self, evidence, claim)[0]
+        generated = self._dataset_reader._instance_generator.generate_instances(self, evidence, claim)[0]
 
         return self._dataset_reader.text_to_instance(claim_id, None, generated["evidence"], claim, label)
 
