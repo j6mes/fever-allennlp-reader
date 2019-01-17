@@ -21,12 +21,16 @@ from fever.reader.simple_random import SimpleRandom
 class FEVERPredictor(Predictor):
     
     def _json_to_instance(self, json_dict: JsonDict) -> Instance:
-        claim_id: int = json_dict['id']
+        claim_id: int = json_dict['id'] if "id" in json_dict else None
         claim: str = json_dict['claim']
         label: str = json_dict['label'] if 'label' in json_dict else None
-        evidence: List[List[Tuple[str, int]]] = json_dict['predicted_sentences']
+        evidence: List[Tuple[str, int]] = json_dict['predicted_sentences']
+        evidence: List[List[Tuple[str,int]]] = [[(None, item[0],item[1]) for item in evidence]]
 
-        return self._dataset_reader.text_to_instance(claim_id, None, evidence, claim, label)
+
+        generated = self._instance_generator.generate_instances(self, evidence, claim)[0]
+
+        return self._dataset_reader.text_to_instance(claim_id, None, generated["evidence"], claim, label)
 
     def predict(self, json_line:str) -> JsonDict:
         return self.predict_json(json.loads(json_line))
