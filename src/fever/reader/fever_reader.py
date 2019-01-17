@@ -70,12 +70,10 @@ class FEVERDatasetReader(DatasetReader):
                          "metadata": MetadataField(instance_meta)
                         }
 
-
         if label is not None:
             instance_dict["label"] = LabelField(label)
 
         return Instance(instance_dict)
-
 
     def generate_instances(self,
                            claim_id:int,
