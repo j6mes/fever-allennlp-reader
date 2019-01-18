@@ -16,6 +16,7 @@ from fever.reader.document_database import FEVERDocumentDatabase
 from fever.reader.preprocessing import FEVERInstanceGenerator, ConcatenateEvidence
 from fever.reader.simple_random import SimpleRandom
 
+import numpy as np
 
 @Predictor.register("fever")
 class FEVERPredictor(Predictor):
@@ -37,3 +38,18 @@ class FEVERPredictor(Predictor):
     def __init__(self, model: Model, dataset_reader: DatasetReader) -> None:
         super().__init__(model, dataset_reader)
 
+    def dump_line(self, outputs: JsonDict) -> str:  # pylint: disable=no-self-use
+        """
+        If you don't want your outputs in JSON-lines format
+        you can override this function to output them differently.
+        """
+        out_dict = {}
+        if "label_logits" in outputs:
+            out_dict["label_logits"] = outputs["label_logits"]
+            out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_logits"]))
+
+        if "label_probs" in outputs:
+            out_dict["label_probs"] = outputs["label_probs"]
+            out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_probs"]))
+
+        return json.dumps(out_dict) + "\n"
