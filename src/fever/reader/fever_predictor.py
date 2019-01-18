@@ -46,10 +46,10 @@ class FEVERPredictor(Predictor):
         out_dict = {}
         if "label_logits" in outputs:
             out_dict["label_logits"] = outputs["label_logits"]
-            out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_logits"]))
+            out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_logits"]),"labels")
 
         if "label_probs" in outputs:
             out_dict["label_probs"] = outputs["label_probs"]
-            out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_probs"]))
+            out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_probs"]),"labels")
 
         return json.dumps(out_dict) + "\n"
