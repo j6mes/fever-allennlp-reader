@@ -1,7 +1,6 @@
 import logging
 import sqlite3
 import unicodedata
-from typing import Iterable
 
 from allennlp.common.file_utils import cached_path
 
@@ -34,3 +33,12 @@ class FEVERDocumentDatabase(object):
             raise Exception("Document not found")
 
         return result[0].split("\n")
+
+
+    def get_doc_ids(self):
+        cursor = self._connection.cursor()
+        cursor.execute("SELECT id FROM documents")
+        results = [result[0] for result in cursor.fetchall()]
+        cursor.close()
+
+        return results
