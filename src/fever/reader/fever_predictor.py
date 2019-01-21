@@ -62,8 +62,10 @@ class FEVEROraclePredictor(FEVERPredictor):
         claim_id: int = json_dict['id'] if "id" in json_dict else None
         claim: str = json_dict['claim']
         label: str = json_dict['label'] if 'label' in json_dict else None
-        evidence: List[Tuple[str, int]] = json_dict['evidence']
-        evidence: List[List[Tuple[str,int]]] = [[(None, item[0],item[1]) for item in evidence]]
+        all_evidence_groups: List[List[Tuple[str, int]]] = json_dict['evidence']
+
+        evidence: List[List[Tuple[str,int]]] = [[(None, item[0],item[1]) for item in evidence]
+                                                for evidence in all_evidence_groups]
 
         generated = self._dataset_reader._instance_generator.generate_instances(self._dataset_reader, evidence, claim)[0]
 
