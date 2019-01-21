@@ -42,3 +42,10 @@ class FEVERDocumentDatabase(object):
         cursor.close()
 
         return results
+
+    def get_non_empty_doc_ids(self):
+        cursor = self._connection.cursor()
+        cursor.execute("SELECT id FROM documents WHERE length(trim(text)) > 0")
+        results = [r[0] for r in cursor.fetchall()]
+        cursor.close()
+        return results
