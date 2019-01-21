@@ -53,3 +53,18 @@ class FEVERPredictor(Predictor):
             out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_probs"]),"labels")
 
         return json.dumps(out_dict) + "\n"
+
+
+@Predictor.register("fever-oracle")
+class FEVEROraclePredictor(FEVERPredictor):
+
+    def _json_to_instance(self, json_dict: JsonDict) -> Instance:
+        claim_id: int = json_dict['id'] if "id" in json_dict else None
+        claim: str = json_dict['claim']
+        label: str = json_dict['label'] if 'label' in json_dict else None
+        evidence: List[Tuple[str, int]] = json_dict['evidence']
+        evidence: List[List[Tuple[str,int]]] = [[(None, item[0],item[1]) for item in evidence]]
+
+        generated = self._dataset_reader._instance_generator.generate_instances(self._dataset_reader, evidence, claim)[0]
+
+        return self._dataset_reader.text_to_instance(claim_id, None, generated["evidence"], claim, label)
