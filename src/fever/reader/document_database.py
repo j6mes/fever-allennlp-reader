@@ -14,7 +14,7 @@ class FEVERDocumentDatabase(object):
     @staticmethod
     def connect(path:str):
         try:
-            return sqlite3.connect(path)
+            return sqlite3.connect(path, check_same_thread=False)
         except sqlite3.Error as e:
             logging.exception(e)
             logging.critical("Unable to load sqlite database")
