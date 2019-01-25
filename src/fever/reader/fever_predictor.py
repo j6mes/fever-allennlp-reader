@@ -1,6 +1,7 @@
 import json
 
 from allennlp.common import JsonDict
+from allennlp.common.util import sanitize
 from allennlp.models import Model
 from allennlp.predictors import Predictor
 from overrides import overrides
@@ -53,6 +54,40 @@ class FEVERPredictor(Predictor):
             out_dict["predicted_label"] = self._model.vocab.get_token_from_index(np.argmax(outputs["label_probs"]),"labels")
 
         return json.dumps(out_dict) + "\n"
+
+    def predict_batch_instance(self, instances: List[Instance]) -> List[JsonDict]:
+        invalid_lines = [id for id,instance in enumerate(instances) if len(instance.fields["premise"].tokens) ==0]
+        instances = [instance for id,instance in enumerate(instances) if id not in invalid_lines]
+
+        outputs = self._model.forward_on_instances(instances)
+
+        for invalid_line in invalid_lines:
+            out_dict = {
+                "label_logits": [0, 0, 0],
+                "predicted_probs": [0, 0, 0]
+            }
+
+            out_dict["label_logits"][self._model.vocab.get_token_index("NOT ENOUGH INFO", "labels")] = 1
+            out_dict["label_probs"][self._model.vocab.get_token_index("NOT ENOUGH INFO", "labels")] = 1
+
+            invalid_lines.insert(invalid_line,out_dict)
+
+        return sanitize(outputs)
+
+    def predict_instance(self, instance: Instance) -> JsonDict:
+        if len(instance.fields["premise"].tokens) == 0:
+            out_dict = {
+                "label_logits": [0,0,0],
+                "predicted_probs": [0,0,0]
+            }
+
+            out_dict["label_logits"][self._model.vocab.get_token_index("NOT ENOUGH INFO","labels")] = 1
+            out_dict["label_probs"][self._model.vocab.get_token_index("NOT ENOUGH INFO","labels")] = 1
+
+            return out_dict
+
+        outputs = self._model.forward_on_instance(instance)
+        return sanitize(outputs)
 
 
 @Predictor.register("fever-oracle")
