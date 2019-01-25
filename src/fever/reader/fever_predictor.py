@@ -64,7 +64,7 @@ class FEVERPredictor(Predictor):
         for invalid_line in invalid_lines:
             out_dict = {
                 "label_logits": [0, 0, 0],
-                "predicted_probs": [0, 0, 0]
+                "label_probs": [0, 0, 0]
             }
 
             out_dict["label_logits"][self._model.vocab.get_token_index("NOT ENOUGH INFO", "labels")] = 1
@@ -78,7 +78,7 @@ class FEVERPredictor(Predictor):
         if len(instance.fields["premise"].tokens) == 0:
             out_dict = {
                 "label_logits": [0,0,0],
-                "predicted_probs": [0,0,0]
+                "label_probs": [0,0,0]
             }
 
             out_dict["label_logits"][self._model.vocab.get_token_index("NOT ENOUGH INFO","labels")] = 1
